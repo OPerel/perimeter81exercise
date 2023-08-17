@@ -1,4 +1,12 @@
+import {Db} from 'mongodb';
+import {Client} from 'pg';
+
+export interface Pet {
+  id: string
+}
+
 export interface Dog {
+  id?: string;
   name: string;
   age: number;
   color: string;
@@ -17,6 +25,8 @@ export interface IService<T> {
 }
 
 export interface IDataAccess<T> {
+  db: Db | Client
+
   create(params: T): Promise<void>;
 
   delete(id: string): Promise<void>;

@@ -1,16 +1,34 @@
 import * as crypto from 'crypto';
 import {IDataAccess, Dog} from '../interfaces';
-import {DataAccess} from './DataAccess';
+import {useDb} from '../configs/db';
+import {Client} from 'pg';
+import postgresqlConfig from '../configs/postgresql.config';
+import {DogsDto} from '../dtos/dogs.dto';
+import mongoConfig from '../configs/mongo.config';
+import {Collection, Db} from 'mongodb';
 
-class DogsDataAccess extends DataAccess implements IDataAccess<Dog> {
+// should sync dbs!!
+
+// with the current implementation every pet will have to implement two data access classes, which is not ideal at all
+// one solution I can think of is to have a factory for each DB type that will return the data access class
+// with generated queries appropriate to the pet
+
+// also, some sort of query generation is needed if we want to filter results in the DBs
+
+class DogsSqlDataAccess implements IDataAccess<Dog> {
+  db: Client;
+
+  constructor() {
+    this.db = postgresqlConfig.DbConnection
+  }
 
   async get(params: Partial<Dog>): Promise<Dog[]> {
     console.log(params)
     try {
-      const result = await this.db.query(`
+      const result = await this.db.query<Dog>(`
         select * from dogs;
       `);
-      return result.rows;
+      return DogsDto({type: 'sql', sqlDog: result});
     } catch (e) {
       throw new Error((e as Error).message)
     }
@@ -55,5 +73,58 @@ class DogsDataAccess extends DataAccess implements IDataAccess<Dog> {
   }
 }
 
-const da = new DogsDataAccess();
-export default da;
+class DogsMongoDataAccess implements IDataAccess<Dog> {
+  db: Db;
+  collection: Collection<Dog>;
+
+  constructor() {
+    this.db = mongoConfig.mongoConnection;
+    this.collection = this.db.collection<Dog>('dogs')
+  }
+
+  async get(params: Partial<Dog>): Promise<Dog[]> {
+    console.log(params)
+    try {
+      const result = await this.collection.find()
+
+      return DogsDto({type: 'mongo', mongoDog: result})
+    } catch (e) {
+      throw new Error((e as Error).message)
+    }
+  }
+
+  async create(params: Dog) {
+    const id = crypto.randomUUID();
+    try {
+      await this.collection.insertOne({id, ...params})
+    } catch (e) {
+      throw new Error((e as Error).message)
+    }
+  }
+
+  async update(id: string, params: Dog) {
+    try {
+      await this.collection.updateOne({id}, {$set: params})
+    } catch (e) {
+      throw new Error((e as Error).message)
+    }
+  }
+
+  async delete(id: string) {
+    try {
+      await this.collection.deleteOne({id})
+    } catch (e) {
+      throw new Error((e as Error).message)
+    }
+  }
+}
+
+function DogsDaFactory(): DogsSqlDataAccess | DogsMongoDataAccess {
+  if (useDb === 'sql') {
+    return new DogsSqlDataAccess()
+  }
+
+  return new DogsMongoDataAccess();
+}
+
+export default DogsDaFactory();

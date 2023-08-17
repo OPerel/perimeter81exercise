@@ -1,6 +1,6 @@
 import {Client} from 'pg';
 
-class DbConfig {
+class PostgresqlConfig {
   private client: Client;
 
   constructor() {
@@ -23,5 +23,5 @@ class DbConfig {
   }
 }
 
-const db = new DbConfig();
-export default db;
+const postgresqlConfig = new PostgresqlConfig();
+export default postgresqlConfig;

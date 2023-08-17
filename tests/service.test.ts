@@ -1,20 +1,24 @@
-import db from '../src/configs/db.config';
+import postgresqlConfig from '../src/configs/postgresql.config';
+import mongoConfig from '../src/configs/mongo.config';
+import {useDb} from '../src/configs/db';
 import service from '../src/service/dogs.service';
 
 afterAll(() => {
-  db.DbConnection.end();
+  if (useDb === 'sql') {
+    postgresqlConfig.DbConnection.end();
+  } else {
+    mongoConfig.closeConnection();
+  }
 })
 
 describe('Service', () => {
-  test('get all users', async () => {
-    const users = await service.get({});
-    expect(users).toEqual([
+  test('get all dogs', async () => {
+    const dogs = await service.get({});
+    expect(dogs).toEqual([
       {
-        "id": "d8b2af93-8ca5-4346-9aa1-bdacda64e027",
         "name": "tom",
         "age": "3.5",
         "color": "white",
-        "type": "dog"
       }
     ]);
   });
