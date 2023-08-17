@@ -3,9 +3,18 @@ import service from '../service/dogs.service';
 
 const dogsRouter = Router();
 
+/**
+ * all routes need a better way for validating inputs
+ * and better error handling
+ */
+
 dogsRouter.get('/', async (_, res) => {
-  const users = await service.get({});
-  res.json(users);
+  try {
+    const users = await service.get({});
+    res.json(users);
+  } catch (e) {
+    res.status(500).json(e);
+  }
 });
 
 dogsRouter.post('/', ((req, res) => {
@@ -17,8 +26,12 @@ dogsRouter.post('/', ((req, res) => {
     res.status(400).json('Dog name required')
   }
 
-  const result = service.create({name, age, color});
-  res.status(201).json({created: result})
+  try {
+    const result = service.create({name, age, color});
+    res.status(201).json({created: result})
+  } catch (e) {
+    res.status(500).json(e)
+  }
 }))
 
 dogsRouter.put('/', (async (req, res) => {
@@ -32,7 +45,7 @@ dogsRouter.put('/', (async (req, res) => {
     await service.update(id, {name, age, color});
     res.status(200).send()
   } catch (e) {
-    res.status(500).send()
+    res.status(500).json(e)
   }
 }))
 

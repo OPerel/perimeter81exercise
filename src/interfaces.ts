@@ -1,15 +1,9 @@
-export interface Pet {
-  id: string;
-  type: string;
-}
-
 export interface Dog {
   name: string;
   age: number;
   color: string;
 }
 
-// api
 export interface IService<T> {
   da: IDataAccess<T>
 

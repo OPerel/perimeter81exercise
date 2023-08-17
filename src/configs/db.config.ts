@@ -5,6 +5,7 @@ class DbConfig {
 
   constructor() {
     this.client = new Client({
+      // should use env files for connection config
       host: 'localhost',
       port: 5432,
       database: 'pet_store',
