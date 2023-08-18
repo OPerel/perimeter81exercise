@@ -1,4 +1,5 @@
-import {FilterParam, Op, OpType} from '../interfaces';
+import {FilterParam, Op, OpType, OrderParam} from '../interfaces';
+import {Sort} from 'mongodb';
 
 const mapOpToMongo = (op: OpType): string => ({
   [Op.Equal]: '$eq',
@@ -21,5 +22,15 @@ export const buildMongoFilters = (filters: FilterParam[]) => {
   return filters.reduce((allFilters, currentFilter) => {
     return {...allFilters, ...buildMongoFilterClause(currentFilter)}
   }, {})
+}
+
+const mongoOrderBy = (order: 'ASC' | 'DESC'): 1 | -1 => {
+  return order === 'ASC' ? 1 : -1;
+}
+
+export const buildMongoOrderClause = (orderParam: OrderParam): Sort => {
+  const {column, order} = orderParam
+
+  return {[column]: mongoOrderBy(order)}
 }
 

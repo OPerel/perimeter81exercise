@@ -1,6 +1,6 @@
 import {buildSqlFilters, buildSqlOrderClause, buildSqlQuery} from '../src/dataAccess/sqlQueryBuilder';
 import {FilterParam, OrderParam} from '../src/interfaces';
-import {buildMongoFilters} from '../src/dataAccess/mongoQuerybuilder';
+import {buildMongoFilters, buildMongoOrderClause} from '../src/dataAccess/mongoQuerybuilder';
 
 describe('Query builder', () => {
   test('no filters', () => {
@@ -44,6 +44,7 @@ describe('Query builder', () => {
     };
 
     expect(buildSqlOrderClause(order as OrderParam)).toEqual(' ORDER BY age ASC');
+    expect(buildMongoOrderClause(order as OrderParam)).toEqual({age: 1});
   });
 
   test('query with filter and order', () => {
