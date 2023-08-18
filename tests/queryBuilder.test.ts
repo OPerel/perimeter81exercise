@@ -1,9 +1,11 @@
-import {buildSqlFilters, buildSqlOrderClause, buildSqlQuery} from '../src/dataAccess/queryBuilder';
+import {buildSqlFilters, buildSqlOrderClause, buildSqlQuery} from '../src/dataAccess/sqlQueryBuilder';
 import {FilterParam, OrderParam} from '../src/interfaces';
+import {buildMongoFilters} from '../src/dataAccess/mongoQuerybuilder';
 
 describe('Query builder', () => {
   test('no filters', () => {
-    expect(buildSqlFilters([])).toEqual('')
+    expect(buildSqlFilters([])).toEqual('');
+    expect(buildMongoFilters([])).toEqual({});
   });
 
   test('single filter', () => {
@@ -12,7 +14,9 @@ describe('Query builder', () => {
       op: 'eq',
       value: 'tom',
     } as FilterParam
+
     expect(buildSqlFilters([filter])).toEqual(' WHERE name = tom');
+    expect(buildMongoFilters([filter])).toEqual({name: {$eq: 'tom'}});
   });
 
   test('two filters', () => {
@@ -30,6 +34,7 @@ describe('Query builder', () => {
     ];
 
     expect(buildSqlFilters(filters as FilterParam[])).toEqual(' WHERE name = tom AND age > 3');
+    expect(buildMongoFilters(filters as FilterParam[])).toEqual({name: {$eq: 'tom'}, age: {$gt: '3'}});
   });
 
   test('order clause', () => {

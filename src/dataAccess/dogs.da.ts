@@ -6,7 +6,8 @@ import postgresqlConfig from '../configs/postgresql.config';
 import {DogsDto} from '../dtos/dogs.dto';
 import mongoConfig from '../configs/mongo.config';
 import {Collection, Db} from 'mongodb';
-import {buildSqlQuery} from './queryBuilder';
+import {buildSqlQuery} from './sqlQueryBuilder';
+import {buildMongoFilters} from './mongoQuerybuilder';
 
 // should sync dbs!!
 
@@ -83,7 +84,8 @@ class DogsMongoDataAccess implements IDataAccess<Dog> {
   async get(filterParams: FilterParam[], orderParam: OrderParam | null): Promise<Dog[]> {
     console.log(filterParams, orderParam)
     try {
-      const result = await this.collection.find()
+      const filters = buildMongoFilters(filterParams)
+      const result = await this.collection.find(filters);
 
       return DogsDto({type: 'mongo', mongoDog: result})
     } catch (e) {
