@@ -1,5 +1,7 @@
 import {OpType, Op, FilterParam, OrderParam} from '../interfaces';
 
+// column names will have to be validates for different pets
+
 const mapOpToSql = (op: OpType): string => ({
   [Op.Equal]: '=',
   [Op.NotEqual]: '!=',

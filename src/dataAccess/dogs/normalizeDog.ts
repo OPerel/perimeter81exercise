@@ -1,5 +1,5 @@
 import {QueryResult} from 'pg';
-import {Dog} from '../interfaces';
+import {Dog} from '../../interfaces';
 import {EnhancedOmit, FindCursor, InferIdType} from 'mongodb';
 
 type DbDogObject = {
@@ -10,7 +10,7 @@ type DbDogObject = {
   mongoDog: FindCursor<EnhancedOmit<Dog, "_id"> & { _id: InferIdType<Dog> }>
 }
 
-export async function DogsDto(dogs: DbDogObject) {
+export async function normalizeDog(dogs: DbDogObject) {
   if (dogs.type === 'sql') {
     return dogs.sqlDog.rows.map((dog: Dog) => ({
       name: dog.name,

@@ -1,4 +1,4 @@
-import da from '../dataAccess/dogs.da';
+import da from '../dataAccess/dogs';
 import {IDataAccess, Dog, IService, FilterParam, OrderParam} from '../interfaces';
 
 class DogsService implements IService<Dog> {
