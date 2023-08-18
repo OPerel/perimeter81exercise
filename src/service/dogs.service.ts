@@ -1,5 +1,5 @@
 import da from '../dataAccess/dogs.da';
-import {IDataAccess, Dog, IService} from '../interfaces';
+import {IDataAccess, Dog, IService, FilterParam} from '../interfaces';
 
 class DogsService implements IService<Dog> {
   da: IDataAccess<Dog>;
@@ -8,8 +8,8 @@ class DogsService implements IService<Dog> {
     this.da = da
   }
 
-  async get(params: Partial<Dog>): Promise<Dog[]> {
-    return await da.get(params);
+  async get(filterParams: FilterParam[]): Promise<Dog[]> {
+    return await da.get(filterParams);
   }
 
 

@@ -19,7 +19,7 @@ export interface IService<T> {
 
   delete(id: string): Promise<void>;
 
-  get(params: Partial<T>): Promise<T[]>;
+  get(filterParams: FilterParam[]): Promise<T[]>;
 
   update(id: string, params: T): Promise<void>;
 }
@@ -31,8 +31,22 @@ export interface IDataAccess<T> {
 
   delete(id: string): Promise<void>;
 
-  get(params: Partial<T>): Promise<T[]>;
+  get(filterParams: FilterParam[]): Promise<T[]>;
 
   update(id: string, params: T): Promise<void>;
 }
 
+export enum Op {
+  Equal = 'eq',
+  NotEqual = 'neq',
+  GreaterThan = 'gt',
+  LessThan = 'lt'
+}
+
+export type OpType = Op.Equal | Op.NotEqual | Op.GreaterThan | Op.LessThan
+
+export interface FilterParam {
+  column: string,
+  op: OpType,
+  value: string
+}

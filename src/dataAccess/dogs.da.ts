@@ -1,11 +1,12 @@
 import * as crypto from 'crypto';
-import {IDataAccess, Dog} from '../interfaces';
+import {IDataAccess, Dog, FilterParam} from '../interfaces';
 import {useDb} from '../configs/db';
 import {Client} from 'pg';
 import postgresqlConfig from '../configs/postgresql.config';
 import {DogsDto} from '../dtos/dogs.dto';
 import mongoConfig from '../configs/mongo.config';
 import {Collection, Db} from 'mongodb';
+import {buildSqlFilters} from './queryBuilder';
 
 // should sync dbs!!
 
@@ -22,11 +23,10 @@ class DogsSqlDataAccess implements IDataAccess<Dog> {
     this.db = postgresqlConfig.DbConnection
   }
 
-  async get(params: Partial<Dog>): Promise<Dog[]> {
-    console.log(params)
+  async get(filterParams: FilterParam[]): Promise<Dog[]> {
     try {
       const result = await this.db.query<Dog>(`
-        select * from dogs;
+        select * from dogs${buildSqlFilters(filterParams)};
       `);
       return DogsDto({type: 'sql', sqlDog: result});
     } catch (e) {
@@ -82,8 +82,8 @@ class DogsMongoDataAccess implements IDataAccess<Dog> {
     this.collection = this.db.collection<Dog>('dogs')
   }
 
-  async get(params: Partial<Dog>): Promise<Dog[]> {
-    console.log(params)
+  async get(filterParams: FilterParam[]): Promise<Dog[]> {
+    console.log(filterParams)
     try {
       const result = await this.collection.find()
 

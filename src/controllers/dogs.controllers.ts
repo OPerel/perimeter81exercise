@@ -1,5 +1,6 @@
 import {Router} from 'express';
 import service from '../service/dogs.service';
+import {FilterParam} from '../interfaces';
 
 const dogsRouter = Router();
 
@@ -8,9 +9,12 @@ const dogsRouter = Router();
  * and better error handling
  */
 
-dogsRouter.get('/', async (_, res) => {
+dogsRouter.post('/search', async (req, res) => {
+  // should validate params
+  const filterParams: FilterParam[] = req.body.filters;
+
   try {
-    const users = await service.get({});
+    const users = await service.get(filterParams);
     res.json(users);
   } catch (e) {
     res.status(500).json(e);
@@ -20,7 +24,7 @@ dogsRouter.get('/', async (_, res) => {
 dogsRouter.post('/', ((req, res) => {
   const {name, age, color} = req.body;
 
-  // should verify all pet params
+  // should validate all pet params
   // probably using schema validation tool like joi
   if (!name) {
     res.status(400).json('Dog name required')
