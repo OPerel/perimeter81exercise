@@ -1,4 +1,4 @@
-import {OpType, Op, FilterParam} from '../interfaces';
+import {OpType, Op, FilterParam, OrderParam} from '../interfaces';
 
 const mapOpToSql = (op: OpType): string => ({
   [Op.Equal]: '=',
@@ -19,4 +19,18 @@ export const buildSqlFilters = (filters: FilterParam[]): string => {
 
   const filterArray = filters.map(buildSqlFilterClause);
   return ' WHERE ' + filterArray.join(' AND ');
+}
+
+export const buildSqlOrderClause = (orderParam: OrderParam | null): string => {
+  if (orderParam === null) {
+    return ''
+  }
+
+  const {column, order} = orderParam;
+
+  return ` ORDER BY ${column} ${order}`;
+}
+
+export const buildSqlQuery = (filterParams: FilterParam[], orderParam: OrderParam | null): string => {
+  return `select * from dogs${buildSqlFilters(filterParams)}${buildSqlOrderClause(orderParam)};`
 }

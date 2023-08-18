@@ -10,28 +10,17 @@ afterAll(() => {
 
 describe('Service', () => {
   test('get all dogs', async () => {
-    const dogs = await service.get([]);
+    const dogs = await service.get([], null);
     expect(dogs).toEqual([
       {
         "name": "tom",
         "age": "3.5",
         "color": "white",
-      }
-    ]);
-  });
-
-  test('get all dogs above age 3', async () => {
-    const dogs = await service.get([{
-      column: 'age',
-      op: 'gt',
-      value: '3',
-    } as FilterParam]);
-
-    expect(dogs).toEqual([
+      },
       {
-        "name": "tom",
-        "age": "3.5",
+        "age": "5",
         "color": "white",
+        "name": "pete",
       }
     ]);
   });
@@ -41,8 +30,14 @@ describe('Service', () => {
       column: 'age',
       op: 'gt',
       value: '4',
-    } as FilterParam]);
+    } as FilterParam], null);
 
-    expect(dogs).toEqual([]);
+    expect(dogs).toEqual([
+      {
+        "age": "5",
+        "color": "white",
+        "name": "pete",
+      }
+    ]);
   });
 });

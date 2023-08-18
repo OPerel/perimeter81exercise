@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import service from '../service/dogs.service';
-import {FilterParam} from '../interfaces';
+import {FilterParam, OrderParam} from '../interfaces';
 
 const dogsRouter = Router();
 
@@ -12,12 +12,13 @@ const dogsRouter = Router();
 dogsRouter.post('/search', async (req, res) => {
   // should validate params
   const filterParams: FilterParam[] = req.body.filters;
+  const orderParam: OrderParam | null = req.body.order || null;
 
   try {
-    const users = await service.get(filterParams);
+    const users = await service.get(filterParams, orderParam);
     res.json(users);
   } catch (e) {
-    res.status(500).json(e);
+    res.status(500).json((e as Error).message);
   }
 });
 

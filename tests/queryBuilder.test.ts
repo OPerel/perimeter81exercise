@@ -1,5 +1,5 @@
-import {buildSqlFilters} from '../src/dataAccess/queryBuilder';
-import {FilterParam} from '../src/interfaces';
+import {buildSqlFilters, buildSqlOrderClause, buildSqlQuery} from '../src/dataAccess/queryBuilder';
+import {FilterParam, OrderParam} from '../src/interfaces';
 
 describe('Query builder', () => {
   test('no filters', () => {
@@ -30,5 +30,52 @@ describe('Query builder', () => {
     ];
 
     expect(buildSqlFilters(filters as FilterParam[])).toEqual(' WHERE name = tom AND age > 3');
+  });
+
+  test('order clause', () => {
+    const order = {
+      column: 'age',
+      order: 'ASC'
+    };
+
+    expect(buildSqlOrderClause(order as OrderParam)).toEqual(' ORDER BY age ASC');
+  });
+
+  test('query with filter and order', () => {
+    const order = {
+      column: 'age',
+      order: 'ASC'
+    };
+
+    const filters = [{
+      column: 'name',
+      op: 'eq',
+      value: 'tom',
+    }]
+
+    expect(buildSqlQuery(filters as FilterParam[], order as OrderParam))
+      .toEqual('select * from dogs WHERE name = tom ORDER BY age ASC;');
+  });
+
+  test('query with two filters and order', () => {
+    const order = {
+      column: 'age',
+      order: 'ASC'
+    };
+
+    const filters = [
+      {
+        column: 'name',
+        op: 'eq',
+        value: 'tom',
+      }, {
+        column: 'age',
+        op: 'gt',
+        value: '3',
+      }
+    ]
+
+    expect(buildSqlQuery(filters as FilterParam[], order as OrderParam))
+      .toEqual('select * from dogs WHERE name = tom AND age > 3 ORDER BY age ASC;');
   });
 })
