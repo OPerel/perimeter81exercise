@@ -1,20 +1,22 @@
-import {Dog, FilterParam, IDataAccess, OrderParam} from '../../interfaces';
+import {FilterParam, IDataAccess, OrderParam, Pet} from '../../interfaces';
 import {Collection, Db} from 'mongodb';
-import mongoConfig from '../../configs/mongo.config';
+import MongoConfig from '../../configs/mongo.config';
 import {buildMongoFilters, buildMongoOrderClause} from '../mongoQuerybuilder';
-import {normalizeDog} from './normalizeDog';
+// import {normalizeDog} from './normalizeDog';
 import crypto from 'crypto';
 
-export class DogsMongoDataAccess implements IDataAccess<Dog> {
+export class PetsMongoDataAccess<T extends Pet> implements IDataAccess<T> {
   db: Db;
-  collection: Collection<Dog>;
+  collection: Collection;
+  type: string
 
-  constructor() {
-    this.db = mongoConfig.mongoConnection;
-    this.collection = this.db.collection<Dog>('dogs')
+  constructor(type: string) {
+    this.db = new MongoConfig().mongoConnection;
+    this.collection = this.db.collection('pets')
+    this.type = type
   }
 
-  async get(filterParams: FilterParam[], orderParam: OrderParam | null): Promise<Dog[]> {
+  async get(filterParams: FilterParam[], orderParam: OrderParam | null): Promise<T[]> {
     try {
       const filters = buildMongoFilters(filterParams)
       let result = await this.collection.find(filters);
@@ -23,22 +25,23 @@ export class DogsMongoDataAccess implements IDataAccess<Dog> {
         result.sort(buildMongoOrderClause(orderParam))
       }
 
-      return normalizeDog({type: 'mongo', mongoDog: result})
+      // return normalizeDog({dbType: 'mongo', mongo: result})
+      return await result.toArray();
     } catch (e) {
       throw new Error((e as Error).message)
     }
   }
 
-  async create(params: Dog) {
+  async create(params: T) {
     const id = crypto.randomUUID();
     try {
-      await this.collection.insertOne({id, ...params})
+      await this.collection.insertOne({...params, id})
     } catch (e) {
       throw new Error((e as Error).message)
     }
   }
 
-  async update(id: string, params: Dog) {
+  async update(id: string, params: T) {
     try {
       await this.collection.updateOne({id}, {$set: params})
     } catch (e) {

@@ -1,6 +1,6 @@
 import {useDb} from '../../configs/db';
-import {DogsSqlDataAccess} from './DogsSqlDataAccess';
-import {DogsMongoDataAccess} from './DogsMongoDataAccess';
+import {SqlDataAccess} from './SqlDataAccess';
+import {PetsMongoDataAccess} from './PetsMongoDataAccess';
 
 // should sync dbs!!
 
@@ -9,12 +9,12 @@ import {DogsMongoDataAccess} from './DogsMongoDataAccess';
 // with generated queries appropriate to the pet
 
 
-function DogsDaFactory(): DogsSqlDataAccess | DogsMongoDataAccess {
+function PetsDaFactory() {
   if (useDb === 'sql') {
-    return new DogsSqlDataAccess()
+    return SqlDataAccess
   }
 
-  return new DogsMongoDataAccess();
+  return PetsMongoDataAccess;
 }
 
-export default DogsDaFactory();
+export default PetsDaFactory();

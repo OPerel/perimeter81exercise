@@ -23,5 +23,5 @@ class MongoConfig {
   }
 }
 
-const mongo = new MongoConfig()
-export default mongo;
+// const mongo = new MongoConfig()
+export default MongoConfig;

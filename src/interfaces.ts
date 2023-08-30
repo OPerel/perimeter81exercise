@@ -1,11 +1,18 @@
 import {Db} from 'mongodb';
 import {Client} from 'pg';
 
-export interface Dog {
-  id?: string;
+export interface Pet {
+  id: string;
   name: string;
   age: number;
+}
+
+export interface Dog extends Pet {
   color: string;
+}
+
+export interface Bird extends Pet {
+  canFly: boolean;
 }
 
 export interface IService<T> {

@@ -1,6 +1,6 @@
 import postgresqlConfig from '../src/configs/postgresql.config';
 import mongoConfig from '../src/configs/mongo.config';
-import service from '../src/service/dogs.service';
+import service from '../src/service/pets.service';
 import {FilterParam} from '../src/interfaces';
 
 afterAll(() => {
@@ -9,7 +9,7 @@ afterAll(() => {
 })
 
 describe('Service', () => {
-  test('get all dogs', async () => {
+  test('get all pets', async () => {
     const dogs = await service.get([], null);
     expect(dogs).toEqual([
       {
@@ -25,7 +25,7 @@ describe('Service', () => {
     ]);
   });
 
-  test('get all dogs above age 4', async () => {
+  test('get all pets above age 4', async () => {
     const dogs = await service.get([{
       column: 'age',
       op: 'gt',

@@ -14,7 +14,7 @@ class PostgresqlConfig {
     });
     this.client
       .connect()
-      .then(() => console.log('connected to DB'))
+      .then(() => console.log('connected to pg'))
       .catch((err) => console.log(err));
   }
 

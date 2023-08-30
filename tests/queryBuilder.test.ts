@@ -60,7 +60,7 @@ describe('Query builder', () => {
     }]
 
     expect(buildSqlQuery(filters as FilterParam[], order as OrderParam))
-      .toEqual('select * from dogs WHERE name = tom ORDER BY age ASC;');
+      .toEqual('select * from pets WHERE name = tom ORDER BY age ASC;');
   });
 
   test('query with two filters and order', () => {
@@ -82,6 +82,6 @@ describe('Query builder', () => {
     ]
 
     expect(buildSqlQuery(filters as FilterParam[], order as OrderParam))
-      .toEqual('select * from dogs WHERE name = tom AND age > 3 ORDER BY age ASC;');
+      .toEqual('select * from pets WHERE name = tom AND age > 3 ORDER BY age ASC;');
   });
 })

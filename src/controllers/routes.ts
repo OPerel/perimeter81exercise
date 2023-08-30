@@ -1,8 +1,8 @@
 import {Router} from 'express';
-import dogsRouter from './dogs.controllers';
+import petsRouter from './pets.controllers';
 
 const routes = Router()
 
-routes.use('/dogs', dogsRouter)
+routes.use('/pets', petsRouter)
 
 export default routes;
